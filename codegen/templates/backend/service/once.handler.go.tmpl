@@ -1,0 +1,12 @@
+// This file generates once.
+// Feel free to modify.
+// Or delete and regenerate with `gop gen` command.
+// InitGenerationDate: {{ .GenerationDate }}
+// InitGopVersionGen: {{ .GopVersionGen }}
+package server
+
+func ReinitHandler(handler *Handler) {
+	handler.HelloWorld = func() (HelloWorldResponse, error) {
+		return HelloWorldResponse{"Hello, World!"}, nil
+	}
+}

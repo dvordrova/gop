@@ -1,0 +1,31 @@
+module_name = "github.com/dvordrova/test_project"
+gop_version = "0.0.1"
+
+consumers = ["topic1"]
+
+[service]
+name = "test_project"
+
+[[service.handler]]
+method = "GET"
+path = "/test"
+
+[[service.handler]]
+method = "POST"
+path = "/test2"
+tables = ["users"]
+topics = ["topic2"]
+
+[database]
+
+[[database.table]]
+name = "users"
+[[database.table.column]]
+name = "id"
+type = "int"
+attributes = ["not null", "primary key"]
+
+[[database.table.column]]
+name = "id"
+type = "string"
+attributes = ["name"]

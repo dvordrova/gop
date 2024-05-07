@@ -1,0 +1,23 @@
+// This file is generated.
+// Do not modify it if you want to regenerate it.
+// To regenerate this file, run `gop gen` in the root directory of this project.
+// GenerationDate: {{ .GenerationDate }}
+// GopVersionGen: {{ .GopVersionGen }}
+// GopVersion: {{ .GopVersion }}
+
+package server
+
+type HelloWorldResponse struct {
+	Text string `json:"text"`
+}
+
+type Handler struct {
+	HelloWorld func() (HelloWorldResponse, error)
+}
+
+// To change this behaviour, redefine ReInitHandler in this package
+func InitHandler(handler *Handler) {
+	handler.HelloWorld = func() (HelloWorldResponse, error) {
+		return HelloWorldResponse{"Hello, World!"}, nil
+	}
+}

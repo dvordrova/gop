@@ -1,0 +1,69 @@
+# This file is generated.
+# Do not modify it if you want to regenerate it.
+# To regenerate this file, run `gop gen` in the root directory of this project.
+# GenerationDate: {{ .GenerationDate }}
+# GopVersionGen: {{ .GopVersionGen }}
+# GopVersion: {{ .GopVersion }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Service.Name }}"
+  namespace: "{{ .Service.Namespace }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Service.Name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Service.Name }}"
+    spec:
+      containers:
+        - name: "{{ .Service.Name }}"
+          image: "{{ .Service.Image }}"
+          args:
+            [
+              "./app",
+              "--address",
+              "0.0.0.0:{{ .Service.Port }}",
+              "--base-path",
+              "/{{ .Service.Name }}",
+              "--trace-endpoint",
+              "my-tempo-distributor.grafana.svc.cluster.local:4318",
+            ]
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: "{{ .Service.Name }}"
+          ports:
+            - containerPort: "{{ .Service.Port }}"
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Service.Name }}"
+  namespace: "{{ .Service.Namespace }}"
+spec:
+  selector:
+    app: "{{ .Service.Name }}"
+  ports:
+    - port: "{{ .Service.Port }}"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ .Service.Name }}"
+  namespace: "{{ .Service.Namespace }}"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: "/{{ .Service.Name }}(/|$)(.*)"
+            pathType: Prefix
+            backend:
+              service:
+                name: "{{ .Service.Name }}"
+                port:
+                  number: "{{ .Service.Port }}"
+---

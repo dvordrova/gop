@@ -1,0 +1,35 @@
+# This file is generated.
+# Do not modify it if you want to regenerate it.
+# To regenerate this file, run `gop gen` in the root directory of this project.
+# GenerationDate: {{ .GenerationDate }}
+# GopVersionGen: {{ .GopVersionGen }}
+# GopVersion: {{ .GopVersion }}
+
+# Stage 1: Building the application
+FROM golang:1.22.0 AS builder
+
+WORKDIR /app
+
+# Copy the Go module files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source code
+COPY . .
+ENV GOCACHE=/root/.cache/go-build
+
+# Build the application
+RUN --mount=type=cache,target="/root/.cache/go-build" go build -o app .
+
+# Stage 2: Setting up the final image
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/app .
+
+# Command to run
+CMD ["./app"]
